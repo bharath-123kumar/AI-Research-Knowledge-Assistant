@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  ai-research-assistant:
+    build: .
+    container_name: ai_research_assistant
+    ports:
+      - "8000:8000"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - CHUNK_SIZE=1000
+      - CHUNK_OVERLAP=150
+    volumes:
+      - assistant_data:/app/data
+      - assistant_models:/app/models
+    restart: unless-stopped
+
+volumes:
+  assistant_data:
+  assistant_models:

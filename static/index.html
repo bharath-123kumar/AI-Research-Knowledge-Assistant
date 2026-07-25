@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Research & Knowledge Assistant</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-icon">⚡</div>
+                <div class="brand-text">
+                    <h2>AI Research</h2>
+                    <span>Knowledge Assistant</span>
+                </div>
+            </div>
+
+            <nav class="nav-menu">
+                <button class="nav-item active" data-tab="documents-tab">
+                    <span class="icon">📄</span> Document Library
+                </button>
+                <button class="nav-item" data-tab="search-tab">
+                    <span class="icon">🔍</span> Semantic & RAG Search
+                </button>
+                <button class="nav-item" data-tab="analysis-tab">
+                    <span class="icon">📊</span> Summarize & Compare
+                </button>
+                <button class="nav-item" data-tab="analytics-tab">
+                    <span class="icon">📈</span> System Analytics
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="status-indicator">
+                    <span class="pulse"></span> System Ready
+                </div>
+                <div class="api-link">
+                    <a href="/docs" target="_blank">Swagger API Docs ↗</a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content View -->
+        <main class="main-content">
+            <!-- Header Bar -->
+            <header class="top-header">
+                <h1 id="tab-title">Document Management & ML Classification</h1>
+                <div class="header-actions">
+                    <button class="btn btn-outline" id="refresh-btn">🔄 Refresh Data</button>
+                </div>
+            </header>
+
+            <div class="content-body">
+                <!-- TAB 1: DOCUMENTS MANAGEMENT -->
+                <section id="documents-tab" class="tab-page active">
+                    <div class="grid-2">
+                        <!-- Upload Card -->
+                        <div class="card">
+                            <h3>Upload Research PDF</h3>
+                            <p class="subtitle">Upload multi-page research papers or whitepapers for automatic text chunking and TensorFlow domain classification.</p>
+                            
+                            <div class="drop-zone" id="drop-zone">
+                                <span class="drop-icon">📥</span>
+                                <p>Drag & drop PDF here or <strong>browse files</strong></p>
+                                <input type="file" id="pdf-file-input" accept=".pdf" hidden>
+                            </div>
+
+                            <div id="upload-progress" class="hidden">
+                                <div class="spinner"></div>
+                                <span id="upload-status-text">Uploading and indexing document...</span>
+                            </div>
+                        </div>
+
+                        <!-- Classification Tester -->
+                        <div class="card">
+                            <h3>ML Classifier Playground</h3>
+                            <p class="subtitle">Test the Deep Neural Network model on custom abstract text.</p>
+                            <textarea id="classify-input-text" placeholder="Enter abstract or technical summary text..."></textarea>
+                            <div style="margin-top: 12px; display: flex; justify-content: space-between; align-items: center;">
+                                <button class="btn btn-primary" id="btn-run-classify">Run TF Classifier</button>
+                                <div id="classification-result-badge" class="badge hidden"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Documents List Table -->
+                    <div class="card" style="margin-top: 24px;">
+                        <h3>Uploaded Documents Repository</h3>
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Document Name</th>
+                                        <th>Domain Category</th>
+                                        <th>Pages</th>
+                                        <th>Chunks</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="documents-table-body">
+                                    <tr>
+                                        <td colspan="6" class="text-center">Loading document index...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TAB 2: SEARCH & RAG -->
+                <section id="search-tab" class="tab-page">
+                    <div class="grid-chat">
+                        <div class="card chat-card">
+                            <div class="chat-header">
+                                <h3>RAG Question Answering Assistant</h3>
+                                <div class="search-options">
+                                    <label>Mode:</label>
+                                    <select id="search-mode-select">
+                                        <option value="hybrid">Hybrid Search (Dense + Sparse)</option>
+                                        <option value="semantic">Semantic Search (Vector Cosine)</option>
+                                        <option value="keyword">Keyword Match</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="chat-messages" id="chat-messages">
+                                <div class="message assistant-msg">
+                                    <div class="msg-avatar">🤖</div>
+                                    <div class="msg-content">
+                                        Hello! Ask me any question across your uploaded research papers. I will retrieve grounded context and provide page-level citations.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="chat-input-area">
+                                <input type="text" id="chat-input" placeholder="Ask a question (e.g. 'What are the main results of the paper?')...">
+                                <button class="btn btn-primary" id="send-chat-btn">Ask Assistant</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TAB 3: ANALYSIS & COMPARISON -->
+                <section id="analysis-tab" class="tab-page">
+                    <div class="grid-2">
+                        <!-- Summarize Card -->
+                        <div class="card">
+                            <h3>Document Summarizer</h3>
+                            <p class="subtitle">Extract Executive, Technical, and Key Takeaway summaries.</p>
+                            
+                            <div class="form-group">
+                                <label>Select Document:</label>
+                                <select id="summarize-doc-select">
+                                    <option value="">-- Choose Document --</option>
+                                </select>
+                            </div>
+                            <button class="btn btn-primary" id="btn-generate-summary">Generate Multi-Tier Summary</button>
+
+                            <div id="summary-result" class="summary-box hidden" style="margin-top: 16px;"></div>
+                        </div>
+
+                        <!-- Multi-Doc Compare Card -->
+                        <div class="card">
+                            <h3>Multi-Document Comparison</h3>
+                            <p class="subtitle">Compare methodologies, pros/cons, similarities, and differences across documents.</p>
+
+                            <div class="form-group">
+                                <label>Select Documents (Hold Ctrl/Cmd to select multiple):</label>
+                                <select id="compare-doc-select" multiple size="4">
+                                </select>
+                            </div>
+                            <button class="btn btn-primary" id="btn-generate-comparison">Run Comparative Analysis</button>
+
+                            <div id="comparison-result" class="summary-box hidden" style="margin-top: 16px;"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TAB 4: SYSTEM ANALYTICS -->
+                <section id="analytics-tab" class="tab-page">
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <span class="metric-icon">📚</span>
+                            <div class="metric-info">
+                                <h4 id="stat-total-docs">0</h4>
+                                <p>Total Indexed Documents</p>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <span class="metric-icon">🧩</span>
+                            <div class="metric-info">
+                                <h4 id="stat-total-chunks">0</h4>
+                                <p>Total Text Chunks</p>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <span class="metric-icon">💬</span>
+                            <div class="metric-info">
+                                <h4 id="stat-total-queries">0</h4>
+                                <p>Questions Answered</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid-2" style="margin-top: 24px;">
+                        <div class="card">
+                            <h3>TensorFlow Domain Category Distribution</h3>
+                            <div id="category-dist-container" class="dist-container"></div>
+                        </div>
+                        <div class="card">
+                            <h3>Recent Queries Log</h3>
+                            <div id="recent-queries-container" class="log-container"></div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
