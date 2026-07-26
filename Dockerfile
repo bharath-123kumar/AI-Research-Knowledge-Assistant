@@ -33,4 +33,4 @@ RUN mkdir -p data/raw_documents data/vector_db data/dataset models
 EXPOSE 8000
 
 # Entrypoint: Train ML model if missing, then start production Uvicorn server
-CMD ["sh", "-c", "python -m src.ml.train_classifier && uvicorn main:app --host 0.0.0.0 --port 8000 --workers 2"]
+CMD ["sh", "-c", "python -m src.ml.train_classifier && uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000} --workers 2"]
