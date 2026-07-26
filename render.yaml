@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: ai-research-assistant
+    env: docker
+    plan: starter
+    dockerfilePath: Dockerfile
+    healthCheckPath: /docs
+    envVars:
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: CHUNK_SIZE
+        value: "1000"
+      - key: CHUNK_OVERLAP
+        value: "150"
+      - key: VECTOR_DB_DIR
+        value: "./data/vector_db"
+      - key: CLASSIFIER_MODEL_PATH
+        value: "./models/tf_classifier.h5"
+      - key: TOKENIZER_PATH
+        value: "./models/tokenizer.pickle"
+      - key: DATABASE_PATH
+        value: "./data/assistant.db"
