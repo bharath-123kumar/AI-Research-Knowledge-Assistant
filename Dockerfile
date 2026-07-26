@@ -26,11 +26,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application files
 COPY . .
 
-# Ensure storage directories exist
-RUN mkdir -p data/raw_documents data/vector_db data/dataset models
+# Pre-train ML model artifacts during Docker build stage to save startup RAM
+RUN python -m src.ml.train_classifier
 
-# Expose server port
-EXPOSE 8000
-
-# Entrypoint: Train ML model if missing, then start production Uvicorn server
-CMD ["sh", "-c", "python -m src.ml.train_classifier && uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000} --workers 2"]
+# Entrypoint: Start Uvicorn single worker to stay under 512MB RAM free tier limit
+CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000} --workers 1"]

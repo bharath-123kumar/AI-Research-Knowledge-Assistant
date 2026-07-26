@@ -13,9 +13,15 @@ class VectorStoreManager:
         self.chroma_client = chromadb.PersistentClient(path=settings.VECTOR_DB_DIR)
         self.collection = self.chroma_client.get_or_create_collection(name="document_chunks")
         
-        # Load local sentence-transformer embedding model
-        print("Loading SentenceTransformer embedding engine (all-MiniLM-L6-v2)...")
-        self.embedder = SentenceTransformer(settings.EMBEDDING_MODEL_NAME)
+        # Lazy load local sentence-transformer embedding model on first use
+        self._embedder = None
+
+    @property
+    def embedder(self):
+        if self._embedder is None:
+            print("Loading SentenceTransformer embedding engine (all-MiniLM-L6-v2)...")
+            self._embedder = SentenceTransformer(settings.EMBEDDING_MODEL_NAME)
+        return self._embedder
 
     def add_chunks(self, chunks: List[Dict[str, Any]]):
         """Embeds and indexes document chunks into ChromaDB."""
